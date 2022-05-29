@@ -9,6 +9,10 @@ enum CardType {
   water,
 }
 
+const cardTypes: CardType[] = Object.values(CardType)
+  .filter(value => typeof value !== 'string')
+  .map(value => value as CardType)
+
 type CardProps = {
   cardType: CardType
 }
@@ -26,15 +30,9 @@ type Player = {
 }
 
 const getNextType = (cardType: CardType): CardType => {
-  const types: CardType[] = [
-    CardType.air,
-    CardType.fire,
-    CardType.earth,
-    CardType.water,
-  ]
-  const currentIndex = types.indexOf(cardType)
-  const nextIndex = (currentIndex + 1) % types.length
-  return types[nextIndex]
+  const currentIndex = cardTypes.indexOf(cardType)
+  const nextIndex = (currentIndex + 1) % cardTypes.length
+  return cardTypes[nextIndex]
 }
 
 type State = {
@@ -44,10 +42,10 @@ type State = {
 const initialState: State = {
   players: [
     {
-      cardType: CardType.fire,
+      cardType: cardTypes[0],
     },
     {
-      cardType: CardType.earth,
+      cardType: cardTypes[0],
     },
   ]
 }

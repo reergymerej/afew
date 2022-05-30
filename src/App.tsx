@@ -1,23 +1,22 @@
 import React, {useReducer} from 'react'
-import { useState } from 'react'
 import './App.css'
 import TypeList from './TypeList'
 
 type CardType = string
 
 const cardTypes: CardType[] = [
-    'air',
-    'fire',
-    'earth',
-    'water',
-    'plant',
-    'psychic',
-    'light',
-    'dark',
-    'metal',
-    'poison',
-    'thunder',
-    'divine',
+  'air',
+  'fire',
+  'earth',
+  'water',
+  'plant',
+  'psychic',
+  'light',
+  'dark',
+  'metal',
+  'poison',
+  'thunder',
+  'divine',
 ]
 
 const getDistance = (a: number, b: number, mod: number): number => {
@@ -28,16 +27,22 @@ const getDistance = (a: number, b: number, mod: number): number => {
   return b - a
 }
 
-const advantageStep = 1 / (cardTypes.length - 2)
-
-const getAdvantageModifier = (a: CardType, opponent: CardType): number => {
+const getAdvantageModifier = (a: CardType, opponent: CardType, cardTypes: CardType[]): number => {
+  if (a === opponent) {
+    return 0
+  }
   const aIndex = cardTypes.indexOf(a)
   const opponentIndex = cardTypes.indexOf(opponent)
   const stepsToOpponent = getDistance(aIndex, opponentIndex, cardTypes.length)
-  const advantage = (stepsToOpponent - 1) * advantageStep
-  return Math.abs(advantage)
+  const high = 1
+  const low = -1
+  const span = Math.abs(high - low)
+  const steps = cardTypes.length - 1
+  const interval = span / (steps - 1)
+  const advantage = high - (interval * (stepsToOpponent - 1))
+  console.log({advantage})
+  return advantage
 }
-
 
 enum CombatResult {
   win,
@@ -76,7 +81,7 @@ type Player = {
   attackValue: number, // TODO: calculate this instead of storing
 }
 
-const getNextType = (cardType: CardType): CardType => {
+const getNextType = (cardType: CardType, cardTypes:CardType[]): CardType => {
   const currentIndex = cardTypes.indexOf(cardType)
   const nextIndex = (currentIndex + 1) % cardTypes.length
   return cardTypes[nextIndex]
@@ -84,9 +89,24 @@ const getNextType = (cardType: CardType): CardType => {
 
 type State = {
   players: Player[],
+  types: string[],
 }
 
 const initialState: State = {
+  types: [
+    'air',
+    'fire',
+    'earth',
+    'water',
+    // 'plant',
+    // 'psychic',
+    // 'light',
+    // 'dark',
+    // 'metal',
+    // 'poison',
+    // 'thunder',
+    // 'divine',
+  ],
   players: [
     {
       cardType: cardTypes[1],
@@ -112,12 +132,16 @@ type KeyProps = {
 }
 
 const Key: React.FunctionComponent<KeyProps> = (props: KeyProps) => {
+  const typesCopy = [
+    ...props.cardTypes,
+    props.cardTypes[0],
+  ]
   return (
     <div className="Key">
-      { props.cardTypes.map(cardType => {
+      { typesCopy.map((cardType, i, all) => {
         return (
-          <div className="KeyItem" key={cardType}>
-            {cardType} &lt;
+          <div className="KeyItem" key={cardType + i}>
+            {cardType} {i < all.length - 1 && '<'}
           </div>
         )
       })}
@@ -149,6 +173,7 @@ const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
 
 enum Actions {
   replacePlayer,
+  changeTypes,
 }
 
 type Action = {
@@ -176,34 +201,34 @@ const reducer = (state: State, action: Action): State => {
       }
     }
 
+    case Actions.changeTypes: {
+      return {
+        ...state,
+        types: action.value,
+      }
+    }
+
     default:
       throw Error(`unhandled action in reducer: "${Actions[action.type]}"`)
   }
 }
 
 const App = () => {
-
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const { players} = state
-  const replacePlayer = (replaceIndex: number, replacePlayer: Player) => {
-    dispatch({
-      type: Actions.replacePlayer,
-      value: {
-        replaceIndex,
-        replacePlayer,
-      },
-    })
-  }
+  const {players} = state
 
   const handeTypeListChange = (newTypes: string[]) => {
-    console.log(newTypes)
+    dispatch({
+      type: Actions.changeTypes,
+      value: newTypes,
+    })
   }
 
   return (
     <div className="App">
       <div>
-        <Key cardTypes={cardTypes} />
+        <Key cardTypes={state.types} />
       </div>
 
       <div className="Board">
@@ -211,23 +236,37 @@ const App = () => {
           const playerIndex = players.indexOf(player)
 
           const handleChangeType = () => {
-            const nextType = getNextType(player.cardType)
-            replacePlayer(playerIndex,
-              {
-              ...player,
-              cardType: nextType,
+            const nextType = getNextType(player.cardType, state.types)
+            dispatch({
+              type: Actions.replacePlayer,
+              value: {
+                replaceIndex: playerIndex,
+                replacePlayer: {
+                  ...player,
+                  cardType: nextType,
+                },
+              },
             })
           }
           const handleRoll: DieProps['onRoll'] = (value) => {
-            replacePlayer(playerIndex,
-              {
-              ...player,
-              dieValue: value,
+            dispatch({
+              type: Actions.replacePlayer,
+              value: {
+                replaceIndex: playerIndex,
+                replacePlayer: {
+                  ...player,
+                  dieValue: value,
+                },
+              },
             })
           }
 
           const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
-          const advantage = getAdvantageModifier(player.cardType, opponent.cardType)
+          const advantage = getAdvantageModifier(
+            player.cardType,
+            opponent.cardType,
+            state.types,
+          )
           const attack = player.dieValue + advantage
 
           return (
@@ -243,7 +282,7 @@ const App = () => {
                 value={player.dieValue}
                 onRoll={handleRoll}
               />
-              <span>attack: {attack}</span>
+              <span>attack: {attack.toFixed(2)}</span>
             </div>
           )
         })}
@@ -252,6 +291,7 @@ const App = () => {
       <div className="TypeList">
         <TypeList
           onChange={handeTypeListChange}
+          types={state.types}
         />
       </div>
     </div>

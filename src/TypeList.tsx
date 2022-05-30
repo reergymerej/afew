@@ -10,10 +10,12 @@ const parseLines = (value: string): string[] => {
 
 type TypeListProps = {
   onChange: (values: string[]) => void,
+  types: string[],
 }
 
 const TypeList: React.FunctionComponent<TypeListProps> = ({
   onChange,
+  types,
 }: TypeListProps) => {
 
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -25,6 +27,9 @@ const TypeList: React.FunctionComponent<TypeListProps> = ({
     <div className="TypeList">
       <textarea
         onChange={handleTextAreaChange}
+        defaultValue={types.join('\n')}
+        cols={30}
+        rows={12}
       />
     </div>
   )

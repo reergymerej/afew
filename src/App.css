@@ -1,16 +1,51 @@
 .App {
+  display: flex;
+  flex-direction: column;
+}
+
+.Board {
+  flex: 1;
+  background: lightgray;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .Row {
+  /*
   display: flex;
   justify-content: center;
+  */
   margin: 4em;
 }
 
 .Card {
-  font-size: 3em;
   text-align: center;
   border: 1px solid black;
   width: 200px;
-  height: 400px;
+  height: 300px;
+  background: #fff;
+}
+
+.Key {
+  display: flex;
+  justify-content: center;
+}
+
+.KeyItem {
+  margin-right: 0.5em;
+}
+
+.Value {
+  display: inline-block;
+  border: 1px solid #000;
+  width: 3em;
+  height: 3em;
+  line-height: 3em;
+}
+
+.Die {
+  background: #fff;
+  width: 2em;
+  height: 2em;
+  border: 2px solid black;
 }

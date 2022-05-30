@@ -2,21 +2,41 @@ import React from 'react'
 import { useState } from 'react'
 import './App.css'
 
-enum CardType {
-  air,
-  fire,
-  earth,
-  water,
+type CardType = string
+
+const cardTypes: CardType[] = [
+    'air',
+    'fire',
+    'earth',
+    'water',
+    'plant',
+    'psychic',
+    'light',
+    'dark',
+    'metal',
+    'poison',
+    'thunder',
+    'divine',
+]
+
+const getDistance = (a: number, b: number, mod: number): number => {
+  // Return modulo distance, steps from a to b.
+  if (b < a) {
+    return mod - a + b
+  }
+  return b - a
 }
 
-const cardTypes: CardType[] = Object.values(CardType)
-  .filter(value => typeof value !== 'string')
-  .map(value => value as CardType)
+const advantageStep = 1 / (cardTypes.length - 2)
 
-type CardProps = {
-  cardType: CardType
-  combatResult: CombatResult | null,
+const getAdvantageModifier = (a: CardType, opponent: CardType): number => {
+  const aIndex = cardTypes.indexOf(a)
+  const opponentIndex = cardTypes.indexOf(opponent)
+  const stepsToOpponent = getDistance(aIndex, opponentIndex, cardTypes.length)
+  const advantage = (stepsToOpponent - 1) * advantageStep
+  return Math.abs(advantage)
 }
+
 
 enum CombatResult {
   win,
@@ -24,14 +44,25 @@ enum CombatResult {
   draw,
 }
 
+type CardProps = {
+  cardType: CardType
+  combatResult: CombatResult | null,
+  advantage: number,
+}
+
 const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
   const {
+    advantage,
     cardType,
     combatResult,
   } = props
   return (
     <div className="Card">
-      {CardType[cardType]}
+      <h1>
+        {cardType}
+      </h1>
+      <br />
+      advantage: {advantage.toFixed(2)}
       <br />
       {combatResult !== null && CombatResult[combatResult]}
     </div>
@@ -40,6 +71,8 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
 
 type Player = {
   cardType: CardType,
+  dieValue: number,
+  attackValue: number, // TODO: calculate this instead of storing
 }
 
 const getNextType = (cardType: CardType): CardType => {
@@ -55,40 +88,62 @@ type State = {
 const initialState: State = {
   players: [
     {
-      cardType: cardTypes[0],
+      cardType: cardTypes[1],
+      dieValue: 1,
+      attackValue: 0,
     },
     {
       cardType: cardTypes[0],
+      dieValue: 1,
+      attackValue: 0,
     },
+    // {
+    //   cardType: cardTypes[0],
+    // },
+    // {
+    //   cardType: cardTypes[0],
+    // },
   ]
 }
 
-const areOpposites = (a: CardType, b: CardType): boolean => {
+type KeyProps = {
+  cardTypes: CardType[],
+}
+
+const Key: React.FunctionComponent<KeyProps> = (props: KeyProps) => {
   return (
-    (a === CardType.air && b === CardType.earth)
-    || (a === CardType.fire && b === CardType.water)
-    || (a === CardType.earth && b === CardType.air)
-    || (a === CardType.water && b === CardType.fire)
+    <div className="Key">
+      { props.cardTypes.map(cardType => {
+        return (
+          <div className="KeyItem" key={cardType}>
+            {cardType} &lt;
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
-const isStronger = (a: CardType, b: CardType): boolean => {
-  //  A < F < E < W < A
-  return (
-    (a === CardType.air && b === CardType.water)
-    || (a === CardType.fire && b === CardType.air)
-    || (a === CardType.earth && b === CardType.fire)
-    || (a === CardType.water && b === CardType.earth)
-  )
+const rand = (min: number, max: number): number => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-const getCombatResult = (a: CardType, opponent: CardType): CombatResult => {
-  if (a === opponent || areOpposites(a, opponent)) {
-    return CombatResult.draw
+type DieProps = {
+  value: number,
+  onRoll: (value: number) => void,
+}
+
+const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
+  const { value, onRoll, } = props
+  const handleClick = () => {
+    const newValue = rand(1, 6)
+    onRoll(newValue)
   }
-  return isStronger(a, opponent)
-    ? CombatResult.win
-    : CombatResult.lose
+  return (
+    <div className="Die" onClick={handleClick}>{value}</div>
+  )
 }
 
 const App = () => {
@@ -110,31 +165,52 @@ const App = () => {
 
   return (
     <div className="App">
-      { players.map((player, i) => {
-        const handleChangeType = () => {
-          const nextType = getNextType(player.cardType)
+      <div>
+        <Key cardTypes={cardTypes} />
+      </div>
+
+      <div className="Board">
+        { players.map((player, i) => {
           const playerIndex = players.indexOf(player)
-          replacePlayer(playerIndex,
-            {
-            ...player,
-            cardType: nextType,
-          })
-        }
 
-        const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
+          const handleChangeType = () => {
+            const nextType = getNextType(player.cardType)
+            replacePlayer(playerIndex,
+              {
+              ...player,
+              cardType: nextType,
+            })
+          }
+          const handleRoll: DieProps['onRoll'] = (value) => {
+            replacePlayer(playerIndex,
+              {
+              ...player,
+              dieValue: value,
+            })
+          }
 
-        const combatResult = getCombatResult(player.cardType, opponent.cardType)
+          const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
+          const advantage = getAdvantageModifier(player.cardType, opponent.cardType)
+          const attack = player.dieValue + advantage
 
-        return (
-          <div key={i} className="Row">
-            <button onClick={handleChangeType}>change type</button>
-            <Card
-              cardType={player.cardType}
-              combatResult={combatResult}
-            />
-          </div>
-        )
-      })}
+          return (
+            <div key={i} className="Row">
+              <button onClick={handleChangeType}>change type</button>
+
+              <Card
+                advantage={advantage}
+                cardType={player.cardType}
+                combatResult={null}
+              />
+              <Die
+                value={player.dieValue}
+                onRoll={handleRoll}
+              />
+              <span>attack: {attack}</span>
+            </div>
+          )
+        })}
+      </div>
     </div>
   );
 }

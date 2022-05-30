@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useReducer} from 'react'
 import { useState } from 'react'
 import './App.css'
+import TypeList from './TypeList'
 
 type CardType = string
 
@@ -146,21 +147,57 @@ const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
   )
 }
 
+enum Actions {
+  replacePlayer,
+}
+
+type Action = {
+  type: Actions,
+  value?: any,
+}
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case Actions.replacePlayer: {
+      const { players} = state
+      const {
+        replaceIndex,
+        replacePlayer,
+      } = action.value
+      const newPlayers = players.map((player, i) => {
+        if (i === replaceIndex) {
+          return replacePlayer
+        }
+        return player
+      })
+      return {
+        ...state,
+        players: newPlayers,
+      }
+    }
+
+    default:
+      throw Error(`unhandled action in reducer: "${Actions[action.type]}"`)
+  }
+}
+
 const App = () => {
-  const [state, setState] = useState<State>(initialState)
+
+  const [state, dispatch] = useReducer(reducer, initialState)
+
   const { players} = state
   const replacePlayer = (replaceIndex: number, replacePlayer: Player) => {
-    const newPlayers = players.map((player, i) => {
-      if (i === replaceIndex) {
-        return replacePlayer
-      }
-      return player
+    dispatch({
+      type: Actions.replacePlayer,
+      value: {
+        replaceIndex,
+        replacePlayer,
+      },
     })
-    const nextState = {
-      ...state,
-      players: newPlayers,
-    }
-    setState(nextState)
+  }
+
+  const handeTypeListChange = (newTypes: string[]) => {
+    console.log(newTypes)
   }
 
   return (
@@ -210,6 +247,12 @@ const App = () => {
             </div>
           )
         })}
+      </div>
+
+      <div className="TypeList">
+        <TypeList
+          onChange={handeTypeListChange}
+        />
       </div>
     </div>
   );

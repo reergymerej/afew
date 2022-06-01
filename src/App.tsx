@@ -1,23 +1,12 @@
 import React, {useReducer} from 'react'
 import './App.css'
+import Card from './Card'
+import Die, {DieProps} from './Die'
+import Key from './Key'
+import reducer from './reducer'
 import TypeList from './TypeList'
+import {Actions, CardType, State} from './types'
 
-type CardType = string
-
-const cardTypes: CardType[] = [
-  'air',
-  'fire',
-  'earth',
-  'water',
-  'plant',
-  'psychic',
-  'light',
-  'dark',
-  'metal',
-  'poison',
-  'thunder',
-  'divine',
-]
 
 const getDistance = (a: number, b: number, mod: number): number => {
   // Return modulo distance, steps from a to b.
@@ -34,51 +23,13 @@ const getAdvantageModifier = (a: CardType, opponent: CardType, cardTypes: CardTy
   const aIndex = cardTypes.indexOf(a)
   const opponentIndex = cardTypes.indexOf(opponent)
   const stepsToOpponent = getDistance(aIndex, opponentIndex, cardTypes.length)
-  const high = 1
-  const low = -1
-  const span = Math.abs(high - low)
+  const HIGH = 1
+  const LOW = -1.4
+  const span = Math.abs(HIGH - LOW)
   const steps = cardTypes.length - 1
   const interval = span / (steps - 1)
-  const advantage = high - (interval * (stepsToOpponent - 1))
-  console.log({advantage})
+  const advantage = HIGH - (interval * (stepsToOpponent - 1))
   return advantage
-}
-
-enum CombatResult {
-  win,
-  lose,
-  draw,
-}
-
-type CardProps = {
-  cardType: CardType
-  combatResult: CombatResult | null,
-  advantage: number,
-}
-
-const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
-  const {
-    advantage,
-    cardType,
-    combatResult,
-  } = props
-  return (
-    <div className="Card">
-      <h1>
-        {cardType}
-      </h1>
-      <br />
-      advantage: {advantage.toFixed(2)}
-      <br />
-      {combatResult !== null && CombatResult[combatResult]}
-    </div>
-  )
-}
-
-type Player = {
-  cardType: CardType,
-  dieValue: number,
-  attackValue: number, // TODO: calculate this instead of storing
 }
 
 const getNextType = (cardType: CardType, cardTypes:CardType[]): CardType => {
@@ -87,26 +38,24 @@ const getNextType = (cardType: CardType, cardTypes:CardType[]): CardType => {
   return cardTypes[nextIndex]
 }
 
-type State = {
-  players: Player[],
-  types: string[],
-}
+
+const cardTypes: CardType[] = [
+  'earth',
+  'water',
+  'air',
+  'fire',
+  'plant',
+  'metal',
+  'thunder',
+  'dark',
+  'light',
+  'psychic',
+]
 
 const initialState: State = {
-  types: [
-    'air',
-    'fire',
-    'earth',
-    'water',
-    // 'plant',
-    // 'psychic',
-    // 'light',
-    // 'dark',
-    // 'metal',
-    // 'poison',
-    // 'thunder',
-    // 'divine',
-  ],
+  isEditMode: false,
+  activePlayerTypeChosen: !false,
+  types: cardTypes,
   players: [
     {
       cardType: cardTypes[1],
@@ -118,100 +67,10 @@ const initialState: State = {
       dieValue: 1,
       attackValue: 0,
     },
-    // {
-    //   cardType: cardTypes[0],
-    // },
-    // {
-    //   cardType: cardTypes[0],
-    // },
   ]
 }
 
-type KeyProps = {
-  cardTypes: CardType[],
-}
 
-const Key: React.FunctionComponent<KeyProps> = (props: KeyProps) => {
-  const typesCopy = [
-    ...props.cardTypes,
-    props.cardTypes[0],
-  ]
-  return (
-    <div className="Key">
-      { typesCopy.map((cardType, i, all) => {
-        return (
-          <div className="KeyItem" key={cardType + i}>
-            {cardType} {i < all.length - 1 && '<'}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-const rand = (min: number, max: number): number => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
-type DieProps = {
-  value: number,
-  onRoll: (value: number) => void,
-}
-
-const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
-  const { value, onRoll, } = props
-  const handleClick = () => {
-    const newValue = rand(1, 6)
-    onRoll(newValue)
-  }
-  return (
-    <div className="Die" onClick={handleClick}>{value}</div>
-  )
-}
-
-enum Actions {
-  replacePlayer,
-  changeTypes,
-}
-
-type Action = {
-  type: Actions,
-  value?: any,
-}
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case Actions.replacePlayer: {
-      const { players} = state
-      const {
-        replaceIndex,
-        replacePlayer,
-      } = action.value
-      const newPlayers = players.map((player, i) => {
-        if (i === replaceIndex) {
-          return replacePlayer
-        }
-        return player
-      })
-      return {
-        ...state,
-        players: newPlayers,
-      }
-    }
-
-    case Actions.changeTypes: {
-      return {
-        ...state,
-        types: action.value,
-      }
-    }
-
-    default:
-      throw Error(`unhandled action in reducer: "${Actions[action.type]}"`)
-  }
-}
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -225,75 +84,107 @@ const App = () => {
     })
   }
 
+  const handleEditToggle = () => {
+    dispatch({
+      type: Actions.toggleEditMode,
+    })
+  }
+
   return (
     <div className="App">
       <div>
         <Key cardTypes={state.types} />
+        <button onClick={handleEditToggle}>
+          edit mode
+        </button>
       </div>
 
-      <div className="Board">
-        { players.map((player, i) => {
-          const playerIndex = players.indexOf(player)
+      { state.isEditMode &&
+        <div className="TypeList">
+          <TypeList
+            onChange={handeTypeListChange}
+            types={state.types}
+          />
+        </div>
+      }
 
-          const handleChangeType = () => {
-            const nextType = getNextType(player.cardType, state.types)
-            dispatch({
-              type: Actions.replacePlayer,
-              value: {
-                replaceIndex: playerIndex,
-                replacePlayer: {
-                  ...player,
-                  cardType: nextType,
+      {!state.isEditMode &&
+        <ol>
+          <li>
+            Choose your card to play.
+          </li>
+          <li>
+            Choose opponent.
+          </li>
+          <li>
+            Roll die.
+          </li>
+        </ol>
+      }
+
+      {!state.isEditMode && !state.activePlayerTypeChosen &&
+        <div>choose type</div>
+      }
+
+      { !state.isEditMode && state.activePlayerTypeChosen &&
+        <div className="Board">
+          { players.map((player, i) => {
+            const playerIndex = players.indexOf(player)
+
+            const handleChangeType = () => {
+              const nextType = getNextType(player.cardType, state.types)
+              dispatch({
+                type: Actions.replacePlayer,
+                value: {
+                  replaceIndex: playerIndex,
+                  replacePlayer: {
+                    ...player,
+                    cardType: nextType,
+                  },
                 },
-              },
-            })
-          }
-          const handleRoll: DieProps['onRoll'] = (value) => {
-            dispatch({
-              type: Actions.replacePlayer,
-              value: {
-                replaceIndex: playerIndex,
-                replacePlayer: {
-                  ...player,
-                  dieValue: value,
+              })
+            }
+            const handleRoll: DieProps['onRoll'] = (value) => {
+              dispatch({
+                type: Actions.replacePlayer,
+                value: {
+                  replaceIndex: playerIndex,
+                  replacePlayer: {
+                    ...player,
+                    dieValue: value,
+                  },
                 },
-              },
-            })
-          }
+              })
+            }
 
-          const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
-          const advantage = getAdvantageModifier(
-            player.cardType,
-            opponent.cardType,
-            state.types,
-          )
-          const attack = player.dieValue + advantage
+            const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
+            const modifier = getAdvantageModifier(
+              player.cardType,
+              opponent.cardType,
+              state.types,
+            )
+            const attack = player.dieValue + modifier
 
-          return (
-            <div key={i} className="Row">
-              <button onClick={handleChangeType}>change type</button>
+            return (
+              <div key={i} className="Row">
+                <button onClick={handleChangeType}>change type</button>
 
-              <Card
-                advantage={advantage}
-                cardType={player.cardType}
-                combatResult={null}
-              />
-              <Die
-                value={player.dieValue}
-                onRoll={handleRoll}
-              />
-              <span>attack: {attack.toFixed(2)}</span>
-            </div>
-          )
-        })}
-      </div>
+                <Card
+                  modifier={modifier}
+                  cardType={player.cardType}
+                  combatResult={null}
+                />
+                <Die
+                  value={player.dieValue}
+                  onRoll={handleRoll}
+                />
+                <span>attack: {attack.toFixed(2)}</span>
+              </div>
+            )
+          })}
+        </div>
+      }
 
-      <div className="TypeList">
-        <TypeList
-          onChange={handeTypeListChange}
-          types={state.types}
-        />
-      </div>
     </div>
   );
 }

@@ -33,6 +33,14 @@ const reducer = (state: State, action: Action): State => {
       isEditMode: !state.isEditMode,
     }
 
+    case Actions.nextGameMode: {
+      const nextGameMode = GameMode.chooseOpponent
+      return {
+        ...state,
+        gameMode: nextGameMode,
+      }
+    }
+
     default:
       throw Error(`unhandled action in reducer: "${Actions[action.type]}"`)
   }

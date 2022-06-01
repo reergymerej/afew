@@ -59,6 +59,7 @@ export enum Actions {
   replacePlayer,
   changeTypes,
   toggleEditMode,
+  nextGameMode,
 }
 
 export type Action = {

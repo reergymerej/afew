@@ -59,12 +59,13 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
 
   const flipped = !isActivePlayer && state.gameMode === GameMode.chooseCard
   const hideModifier = isActivePlayer && state.gameMode === GameMode.chooseCard
+  const canChangeType = isActivePlayer && state.gameMode === GameMode.chooseCard
 
   return (
     <div className={cx("PlayerCard", {})}>
       <button
         onClick={handleChangeType}
-        disabled={!isActivePlayer}
+        disabled={!canChangeType}
       >change type</button>
 
       <Card

@@ -1,6 +1,4 @@
 import React from 'react'
-import Card from './Card'
-import Die, {DieProps} from './Die'
 import PlayerCard from './PlayerCard'
 import {CardType, Player, Action, State, Actions} from './types'
 

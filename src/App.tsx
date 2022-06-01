@@ -44,7 +44,10 @@ const App = () => {
       }
 
       {!state.isEditMode &&
-        <Hint gameMode={state.gameMode} />
+        <Hint
+          gameMode={state.gameMode}
+          dispatch={dispatch}
+        />
       }
 
       {!state.isEditMode && !state.activePlayerTypeChosen &&

@@ -4,18 +4,21 @@ import cx from 'classnames'
 type HintProps = {
   gameMode: GameMode,
   dispatch: React.Dispatch<Action>,
+  opponentSelected: boolean,
 }
 
 const Hint: React.FunctionComponent<HintProps> = ({
   gameMode,
   dispatch,
+  opponentSelected,
 }) => {
   const handleNextClick = () => {
     dispatch({
       type: Actions.nextGameMode,
     })
   }
-  const canClickNext = true
+  const canClickNext = gameMode === GameMode.chooseCard
+    || (gameMode === GameMode.chooseOpponent && opponentSelected)
   return (
     <div className="Hint">
       <ol>

@@ -40,17 +40,23 @@ const Board: React.FunctionComponent<BoardProps> = ({
 }) => {
   const {
     activePlayerIndex,
+    opponentIndex,
   } = state
   return (
     <div className="Board">
       { players.map((player, i) => {
-        const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
-        const modifier = getAdvantageModifier(
+        const isActivePlayer = i === activePlayerIndex
+        const opponentIndex = isActivePlayer
+          ? state.opponentIndex
+          : activePlayerIndex
+
+        const opponent = opponentIndex !== null && players[opponentIndex]
+        const modifier = !opponent ? null : getAdvantageModifier(
           player.cardType,
           opponent.cardType,
           state.types,
         )
-        const attack = player.dieValue + modifier
+        const attack = player.dieValue + (modifier || 0)
 
         return (
           <div key={i} className="Row">
@@ -59,7 +65,7 @@ const Board: React.FunctionComponent<BoardProps> = ({
               state={state}
               playerIndex={i}
               dispatch={dispatch}
-              isActivePlayer={i === activePlayerIndex}
+              isActivePlayer={isActivePlayer}
               attack={attack}
               modifier={modifier}
             />

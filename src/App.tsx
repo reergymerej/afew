@@ -25,6 +25,9 @@ const App = () => {
     })
   }
 
+  const { opponentIndex } = state
+  const opponentSelected = opponentIndex !== null
+
   return (
     <div className="App">
       <div>
@@ -47,6 +50,7 @@ const App = () => {
         <Hint
           gameMode={state.gameMode}
           dispatch={dispatch}
+          opponentSelected={opponentSelected}
         />
       }
 

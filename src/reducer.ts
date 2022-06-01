@@ -41,6 +41,13 @@ const reducer = (state: State, action: Action): State => {
       }
     }
 
+    case Actions.selectOpponent: {
+      return {
+        ...state,
+        opponentIndex: action.value,
+      }
+    }
+
     default:
       throw Error(`unhandled action in reducer: "${Actions[action.type]}"`)
   }

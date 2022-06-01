@@ -33,6 +33,7 @@ export type State = {
   isEditMode: boolean,
   activePlayerIndex: number,
   gameMode: GameMode,
+  opponentIndex: null | number,
 }
 
 export const initialState: State = {
@@ -40,6 +41,7 @@ export const initialState: State = {
   isEditMode: false,
   activePlayerIndex: 0,
   activePlayerTypeChosen: !false,
+  opponentIndex: null,
   types: cardTypes,
   players: [
     {
@@ -52,6 +54,21 @@ export const initialState: State = {
       dieValue: 1,
       attackValue: 0,
     },
+    {
+      cardType: cardTypes[1],
+      dieValue: 1,
+      attackValue: 0,
+    },
+    {
+      cardType: cardTypes[2],
+      dieValue: 1,
+      attackValue: 0,
+    },
+    {
+      cardType: cardTypes[3],
+      dieValue: 1,
+      attackValue: 0,
+    },
   ]
 }
 
@@ -60,6 +77,7 @@ export enum Actions {
   changeTypes,
   toggleEditMode,
   nextGameMode,
+  selectOpponent,
 }
 
 export type Action = {

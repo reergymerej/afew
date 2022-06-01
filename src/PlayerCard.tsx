@@ -17,7 +17,7 @@ type PlayerCardProps = {
   state: State,
   playerIndex: number,
   attack: number,
-  modifier: number,
+  modifier: null | number,
 }
 const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   isActivePlayer,
@@ -61,6 +61,19 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   const hideModifier = isActivePlayer && state.gameMode === GameMode.chooseCard
   const canChangeType = isActivePlayer && state.gameMode === GameMode.chooseCard
 
+  const isOpponent = !isActivePlayer
+    && state.gameMode !== GameMode.chooseCard
+    && state.opponentIndex === playerIndex
+
+  const handleCardClick = () => {
+    if (state.gameMode === GameMode.chooseOpponent) {
+      dispatch({
+        type: Actions.selectOpponent,
+        value: playerIndex,
+      })
+    }
+  }
+
   return (
     <div className={cx("PlayerCard", {})}>
       <button
@@ -75,6 +88,8 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
         isActivePlayer={isActivePlayer}
         flipped={flipped}
         hideModifier={hideModifier}
+        isOpponent={isOpponent}
+        onClick={handleCardClick}
       />
       { state.gameMode === GameMode.battle &&
         <div>

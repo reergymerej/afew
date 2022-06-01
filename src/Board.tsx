@@ -56,19 +56,25 @@ const Board: React.FunctionComponent<BoardProps> = ({
           opponent.cardType,
           state.types,
         )
-        const attack = player.dieValue + (modifier || 0)
         const playerIsBattling = isActivePlayer || i === opponentIndex
+
+
+        const attack = player.dieValue
+          && (player.dieValue + (modifier || 0))
+
+
         const showDie = (state.gameMode === GameMode.battle) && playerIsBattling
 
         return (
           <div key={i} className="Row">
             <PlayerCard
+              playerIsBattling={playerIsBattling}
               player={player}
               state={state}
               playerIndex={i}
               dispatch={dispatch}
               isActivePlayer={isActivePlayer}
-              attack={attack}
+              attack={attack || null}
               modifier={modifier}
               hideDie={!showDie}
             />

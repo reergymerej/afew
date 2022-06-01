@@ -3,7 +3,6 @@ export type CardType = string
 export type Player = {
   cardType: CardType,
   dieValue: number,
-  attackValue: number, // TODO: calculate this instead of storing
 }
 
 export enum GameMode {
@@ -46,28 +45,23 @@ export const initialState: State = {
   players: [
     {
       cardType: cardTypes[1],
-      dieValue: 1,
-      attackValue: 0,
+      dieValue: 0,
     },
     {
       cardType: cardTypes[0],
-      dieValue: 1,
-      attackValue: 0,
+      dieValue: 0,
     },
     {
       cardType: cardTypes[1],
-      dieValue: 1,
-      attackValue: 0,
+      dieValue: 0,
     },
     {
       cardType: cardTypes[2],
-      dieValue: 1,
-      attackValue: 0,
+      dieValue: 0,
     },
     {
       cardType: cardTypes[3],
-      dieValue: 1,
-      attackValue: 0,
+      dieValue: 0,
     },
   ]
 }

@@ -9,13 +9,16 @@ const rand = (min: number, max: number): number => {
 export type DieProps = {
   value: number,
   onRoll: (value: number) => void,
+  canRoll: boolean,
 }
 
 const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
-  const { value, onRoll, } = props
+  const { value, onRoll, canRoll} = props
   const handleClick = () => {
-    const newValue = rand(1, 6)
-    onRoll(newValue)
+    if (canRoll) {
+      const newValue = rand(1, 6)
+      onRoll(newValue)
+    }
   }
   return (
     <div className="Die" onClick={handleClick}>{value}</div>

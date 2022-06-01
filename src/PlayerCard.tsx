@@ -16,9 +16,10 @@ type PlayerCardProps = {
   player: Player,
   state: State,
   playerIndex: number,
-  attack: number,
+  attack: null | number,
   modifier: null | number,
   hideDie: boolean,
+  playerIsBattling: boolean,
 }
 const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   isActivePlayer,
@@ -29,8 +30,8 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   attack,
   modifier,
   hideDie,
+  playerIsBattling,
 }) => {
-
   const handleChangeType = () => {
     const nextType = getNextType(player.cardType, state.types)
     dispatch({
@@ -59,7 +60,8 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   }
 
 
-  const flipped = !isActivePlayer && state.gameMode === GameMode.chooseCard
+  const flipped = (!isActivePlayer && state.gameMode === GameMode.chooseCard)
+    || (state.gameMode === GameMode.battle && !playerIsBattling)
   const hideModifier = isActivePlayer && state.gameMode === GameMode.chooseCard
   const canChangeType = isActivePlayer && state.gameMode === GameMode.chooseCard
 
@@ -76,6 +78,7 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
     }
   }
 
+  const showAttack = attack !== null
   return (
     <div className={cx("PlayerCard", {})}>
       <button
@@ -98,8 +101,9 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
           <Die
             value={player.dieValue}
             onRoll={handleRoll}
+            canRoll={player.dieValue === 0}
           />
-          <span>attack: {attack.toFixed(2)}</span>
+          {showAttack && <span>attack: {attack.toFixed(2)}</span>}
         </div>
       }
     </div>

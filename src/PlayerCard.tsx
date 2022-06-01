@@ -57,6 +57,9 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   }
 
 
+  const flipped = !isActivePlayer && state.gameMode === GameMode.chooseCard
+  const hideModifier = isActivePlayer && state.gameMode === GameMode.chooseCard
+
   return (
     <div className={cx("PlayerCard", {})}>
       <button
@@ -69,6 +72,8 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
         cardType={player.cardType}
         combatResult={null}
         isActivePlayer={isActivePlayer}
+        flipped={flipped}
+        hideModifier={hideModifier}
       />
       { state.gameMode === GameMode.battle &&
         <div>

@@ -28,6 +28,9 @@
 .Card.active {
   border: 5px solid black;
 }
+.Card.flipped {
+  background: #000;
+}
 
 .Key {
   display: flex;

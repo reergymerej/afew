@@ -1,6 +1,7 @@
 import React from 'react'
 import Card from './Card'
 import Die, {DieProps} from './Die'
+import PlayerCard from './PlayerCard'
 import {CardType, Player, Action, State, Actions} from './types'
 
 const getDistance = (a: number, b: number, mod: number): number => {
@@ -27,12 +28,6 @@ const getAdvantageModifier = (a: CardType, opponent: CardType, cardTypes: CardTy
   return advantage
 }
 
-const getNextType = (cardType: CardType, cardTypes:CardType[]): CardType => {
-  const currentIndex = cardTypes.indexOf(cardType)
-  const nextIndex = (currentIndex + 1) % cardTypes.length
-  return cardTypes[nextIndex]
-}
-
 
 type BoardProps = {
   players: Player[]
@@ -45,64 +40,36 @@ const Board: React.FunctionComponent<BoardProps> = ({
   players,
   state,
 }) => {
+  const {
+    activePlayerIndex,
+  } = state
   return (
-      <div className="Board">
-          { players.map((player, i) => {
-            const playerIndex = players.indexOf(player)
+    <div className="Board">
+      { players.map((player, i) => {
+        const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
+        const modifier = getAdvantageModifier(
+          player.cardType,
+          opponent.cardType,
+          state.types,
+        )
+        const attack = player.dieValue + modifier
 
-            const handleChangeType = () => {
-              const nextType = getNextType(player.cardType, state.types)
-              dispatch({
-                type: Actions.replacePlayer,
-                value: {
-                  replaceIndex: playerIndex,
-                  replacePlayer: {
-                    ...player,
-                    cardType: nextType,
-                  },
-                },
-              })
-            }
-            const handleRoll: DieProps['onRoll'] = (value) => {
-              dispatch({
-                type: Actions.replacePlayer,
-                value: {
-                  replaceIndex: playerIndex,
-                  replacePlayer: {
-                    ...player,
-                    dieValue: value,
-                  },
-                },
-              })
-            }
-
-            const opponent = players.filter((_, playerIndex) => playerIndex !== i)[0]
-            const modifier = getAdvantageModifier(
-              player.cardType,
-              opponent.cardType,
-              state.types,
-            )
-            const attack = player.dieValue + modifier
-
-            return (
-              <div key={i} className="Row">
-                <button onClick={handleChangeType}>change type</button>
-
-                <Card
-                  modifier={modifier}
-                  cardType={player.cardType}
-                  combatResult={null}
-                />
-                <Die
-                  value={player.dieValue}
-                  onRoll={handleRoll}
-                />
-                <span>attack: {attack.toFixed(2)}</span>
-              </div>
-            )
-          })}
-      </div>
-    )
+        return (
+          <div key={i} className="Row">
+            <PlayerCard
+              player={player}
+              state={state}
+              playerIndex={i}
+              dispatch={dispatch}
+              isActivePlayer={i === activePlayerIndex}
+              attack={attack}
+              modifier={modifier}
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 export default Board

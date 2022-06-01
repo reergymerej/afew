@@ -1,10 +1,12 @@
 import React from 'react'
 import {CardType, CombatResult} from './types'
+import cx from 'classnames'
 
 type CardProps = {
   cardType: CardType
   combatResult: CombatResult | null,
   modifier: number,
+  isActivePlayer: boolean,
 }
 
 const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
@@ -12,9 +14,12 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     modifier,
     cardType,
     combatResult,
+    isActivePlayer,
   } = props
   return (
-    <div className="Card">
+    <div className={cx("Card", {
+      active: isActivePlayer,
+    })}>
       <h1>
         {cardType}
       </h1>

@@ -1,4 +1,4 @@
-import {State, Action, Actions} from "./types"
+import {GameMode, State, Action, Actions} from "./types"
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {

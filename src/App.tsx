@@ -1,43 +1,12 @@
 import {useReducer} from 'react'
 import './App.css'
 import Board from './Board'
+import Hint from './Hint'
 import Key from './Key'
 import reducer from './reducer'
 import TypeList from './TypeList'
-import {Actions, CardType, State} from './types'
+import {Actions, initialState} from './types'
 
-
-
-const cardTypes: CardType[] = [
-  'earth',
-  'water',
-  'air',
-  'fire',
-  'plant',
-  'metal',
-  'thunder',
-  'dark',
-  'light',
-  'psychic',
-]
-
-const initialState: State = {
-  isEditMode: false,
-  activePlayerTypeChosen: !false,
-  types: cardTypes,
-  players: [
-    {
-      cardType: cardTypes[1],
-      dieValue: 1,
-      attackValue: 0,
-    },
-    {
-      cardType: cardTypes[0],
-      dieValue: 1,
-      attackValue: 0,
-    },
-  ]
-}
 
 
 const App = () => {
@@ -75,17 +44,7 @@ const App = () => {
       }
 
       {!state.isEditMode &&
-        <ol>
-          <li>
-            Choose your card to play.
-          </li>
-          <li>
-            Choose opponent.
-          </li>
-          <li>
-            Roll die.
-          </li>
-        </ol>
+        <Hint gameMode={state.gameMode} />
       }
 
       {!state.isEditMode && !state.activePlayerTypeChosen &&

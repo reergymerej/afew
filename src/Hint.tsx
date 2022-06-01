@@ -13,7 +13,7 @@ const Hint: React.FunctionComponent<HintProps> = ({
   opponentSelected,
 }) => {
   const handleNextClick = () => {
-    dispatch({
+    return dispatch({
       type: Actions.nextGameMode,
     })
   }

@@ -34,10 +34,19 @@ const reducer = (state: State, action: Action): State => {
     }
 
     case Actions.nextGameMode: {
-      const nextGameMode = GameMode.chooseOpponent
-      return {
-        ...state,
-        gameMode: nextGameMode,
+      switch (state.gameMode) {
+        case GameMode.chooseCard:
+          return {
+            ...state,
+            gameMode: GameMode.chooseOpponent,
+          }
+        case GameMode.chooseOpponent:
+          return {
+            ...state,
+            gameMode: GameMode.battle,
+          }
+        default:
+          throw new Error(`unhandled case "${GameMode[state.gameMode]}"`)
       }
     }
 

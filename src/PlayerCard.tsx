@@ -18,6 +18,7 @@ type PlayerCardProps = {
   playerIndex: number,
   attack: number,
   modifier: null | number,
+  hideDie: boolean,
 }
 const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   isActivePlayer,
@@ -27,6 +28,7 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   playerIndex,
   attack,
   modifier,
+  hideDie,
 }) => {
 
   const handleChangeType = () => {
@@ -91,7 +93,7 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
         isOpponent={isOpponent}
         onClick={handleCardClick}
       />
-      { state.gameMode === GameMode.battle &&
+      { !hideDie &&
         <div>
           <Die
             value={player.dieValue}

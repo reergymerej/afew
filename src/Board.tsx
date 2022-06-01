@@ -1,6 +1,6 @@
 import React from 'react'
 import PlayerCard from './PlayerCard'
-import {CardType, Player, Action, State, Actions} from './types'
+import {CardType, Player, Action, State, Actions, GameMode} from './types'
 
 const getDistance = (a: number, b: number, mod: number): number => {
   // Return modulo distance, steps from a to b.
@@ -46,17 +46,19 @@ const Board: React.FunctionComponent<BoardProps> = ({
     <div className="Board">
       { players.map((player, i) => {
         const isActivePlayer = i === activePlayerIndex
-        const opponentIndex = isActivePlayer
+        const thisPlayersOpponent = isActivePlayer
           ? state.opponentIndex
           : activePlayerIndex
 
-        const opponent = opponentIndex !== null && players[opponentIndex]
+        const opponent = thisPlayersOpponent !== null && players[thisPlayersOpponent]
         const modifier = !opponent ? null : getAdvantageModifier(
           player.cardType,
           opponent.cardType,
           state.types,
         )
         const attack = player.dieValue + (modifier || 0)
+        const playerIsBattling = isActivePlayer || i === opponentIndex
+        const showDie = (state.gameMode === GameMode.battle) && playerIsBattling
 
         return (
           <div key={i} className="Row">
@@ -68,6 +70,7 @@ const Board: React.FunctionComponent<BoardProps> = ({
               isActivePlayer={isActivePlayer}
               attack={attack}
               modifier={modifier}
+              hideDie={!showDie}
             />
           </div>
         )

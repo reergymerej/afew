@@ -12,12 +12,6 @@ import {Actions, initialState} from './types'
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const handeTypeListChange = (newTypes: string[]) => {
-    dispatch({
-      type: Actions.changeTypes,
-      value: newTypes,
-    })
-  }
 
   const handleEditToggle = () => {
     dispatch({
@@ -40,7 +34,7 @@ const App = () => {
       { state.isEditMode &&
         <div className="TypeList">
           <TypeList
-            onChange={handeTypeListChange}
+            dispatch={dispatch}
             types={state.types}
           />
         </div>

@@ -1,33 +1,36 @@
 import React, {ChangeEvent} from 'react'
+import {Action, Actions, CardType} from './types'
+import {parseCardTypesText} from './util'
 
 
-const parseLines = (value: string): string[] => {
-    return value.split('\n')
-      .map(x => x.trim())
-      .filter(x => x)
-      .filter((x, i, all) => all.indexOf(x) === i)
-}
 
 type TypeListProps = {
-  onChange: (values: string[]) => void,
-  types: string[],
+  types: CardType[],
+  dispatch: React.Dispatch<Action>,
+}
+
+const typeToString = (value: CardType): string => {
+  return `${value.name} ${value.color || ''}`.trim()
 }
 
 const TypeList: React.FunctionComponent<TypeListProps> = ({
-  onChange,
+  dispatch,
   types,
 }: TypeListProps) => {
 
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const values = parseLines(event.target.value)
-    onChange(values)
+    const newTypes = parseCardTypesText(event.target.value)
+    dispatch({
+      type: Actions.changeTypes,
+      value: newTypes,
+    })
   }
 
   return (
     <div className="TypeList">
       <textarea
         onChange={handleTextAreaChange}
-        defaultValue={types.join('\n')}
+        defaultValue={types.map(typeToString).join('\n')}
         cols={30}
         rows={12}
       />

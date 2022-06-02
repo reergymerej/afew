@@ -1,4 +1,9 @@
-export type CardType = string
+import {parseCardTypesText} from "./util"
+
+export type CardType = {
+  name: string,
+  color?: string,
+}
 
 export type Player = {
   cardType: CardType,
@@ -11,23 +16,25 @@ export enum GameMode {
   battle,
 }
 
-export const cardTypes: CardType[] = [
-  'earth',
-  'water',
-  'air',
-  'fire',
-  'plant',
-  'metal',
-  'thunder',
-  'dark',
-  'light',
-  'psychic',
-]
+const savedTypesDefs = `
+earth brown
+water blue
+air lightblue
+fire red
+plant green
+metal silver
+thunder orange
+dark black
+light yellow
+psychic purple
+`
+
+export const cardTypes: CardType[] = parseCardTypesText(savedTypesDefs)
 
 
 export type State = {
   players: Player[],
-  types: string[],
+  types: CardType[],
   activePlayerTypeChosen: boolean,
   isEditMode: boolean,
   activePlayerIndex: number,
@@ -72,6 +79,7 @@ export enum Actions {
   toggleEditMode,
   nextGameMode,
   selectOpponent,
+  setPlayerDieRoll,
 }
 
 export type Action = {

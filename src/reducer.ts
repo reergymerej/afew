@@ -57,6 +57,15 @@ const reducer = (state: State, action: Action): State => {
       }
     }
 
+    case Actions.setPlayerDieRoll: {
+      throw new Error('not implemented')
+      return {
+        ...state,
+        // TODO: add player die roll
+
+      }
+    }
+
     default:
       throw Error(`unhandled action in reducer: "${Actions[action.type]}"`)
   }

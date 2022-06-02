@@ -1,11 +1,12 @@
 .App {
   display: flex;
   flex-direction: column;
+  margin: 1em;
 }
 
 .Board {
   flex: 1;
-  background: lightgray;
+  /* background: lightgray; */
   display: flex;
   flex-wrap: wrap;
 }
@@ -24,12 +25,14 @@
   width: 200px;
   height: 300px;
   background: #fff;
+  opacity: 0.3;
 }
 .Card.active {
   border: 5px solid black;
+  opacity: 1;
 }
 .Card.opponent {
-  border: 5px solid red;
+  opacity: 1;
 }
 .Card.flipped {
   background: #000;
@@ -42,6 +45,7 @@
 
 .KeyItem {
   margin-right: 0.5em;
+  padding: 0.3em;
 }
 
 .Value {

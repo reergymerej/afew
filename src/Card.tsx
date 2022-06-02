@@ -1,6 +1,7 @@
 import React from 'react'
 import {CardType, CombatResult} from './types'
 import cx from 'classnames'
+import {getStyleForCardType} from './util'
 
 type CardProps = {
   cardType: CardType
@@ -24,16 +25,18 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     hideModifier,
     onClick,
   } = props
+  const style = flipped ? undefined : getStyleForCardType(cardType)
   return (
     <div className={cx("Card", {
       active: isActivePlayer,
       opponent: isOpponent,
       flipped: flipped,
     })}
+      style={style}
       onClick={onClick}
     >
       <h1>
-        {cardType}
+        {cardType.name}
       </h1>
       <br />
       {!hideModifier && modifier !== null &&

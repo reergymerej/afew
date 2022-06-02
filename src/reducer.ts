@@ -1,4 +1,4 @@
-import {GameMode, State, Action, Actions} from "./types"
+import {GameMode, State, Action, Actions, Player} from "./types"
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -45,6 +45,19 @@ const reducer = (state: State, action: Action): State => {
             ...state,
             gameMode: GameMode.battle,
           }
+        case GameMode.battle: {
+          const newPlayers = state.players.map(player => {
+            return {
+              ...player,
+              dieValue: 0,
+            }
+          })
+          return {
+            ...state,
+            gameMode: GameMode.chooseCard,
+            players: newPlayers,
+          }
+        }
         default:
           throw new Error(`unhandled case "${GameMode[state.gameMode]}"`)
       }
@@ -58,11 +71,45 @@ const reducer = (state: State, action: Action): State => {
     }
 
     case Actions.setPlayerDieRoll: {
-      throw new Error('not implemented')
+      const { players} = state
+      const {
+        playerIndex,
+        dieValue,
+      } = action.value
+      const newPlayers = players.map((player, i): Player => {
+        if (i === playerIndex) {
+          return {
+            ...player,
+            dieValue,
+          }
+        }
+        return player
+      })
       return {
         ...state,
-        // TODO: add player die roll
+        players: newPlayers,
+      }
+    }
 
+    case Actions.resolveBattle: {
+      // Who won?
+      return {
+        ...state,
+        battleAttacks: [],
+        battleResolved: true,
+      }
+    }
+
+    case Actions.addBattleAttack: {
+      return {
+        ...state,
+        battleAttacks: [
+          ...state.battleAttacks,
+          {
+            playerIndex: action.value.playerIndex,
+            value: action.value.attack,
+          },
+        ],
       }
     }
 

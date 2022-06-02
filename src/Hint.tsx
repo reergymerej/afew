@@ -5,12 +5,14 @@ type HintProps = {
   gameMode: GameMode,
   dispatch: React.Dispatch<Action>,
   opponentSelected: boolean,
+  battleResolved: boolean,
 }
 
 const Hint: React.FunctionComponent<HintProps> = ({
   gameMode,
   dispatch,
   opponentSelected,
+  battleResolved,
 }) => {
   const handleNextClick = () => {
     return dispatch({
@@ -19,6 +21,7 @@ const Hint: React.FunctionComponent<HintProps> = ({
   }
   const canClickNext = gameMode === GameMode.chooseCard
     || (gameMode === GameMode.chooseOpponent && opponentSelected)
+    || (gameMode === GameMode.battle && battleResolved)
   return (
     <div className="Hint">
       <ol>

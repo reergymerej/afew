@@ -12,6 +12,7 @@ const getNextType = (cardType: CardType, cardTypes:CardType[]): CardType => {
 
 type PlayerCardProps = {
   isActivePlayer: boolean,
+  showChangeType: boolean,
   dispatch: React.Dispatch<Action>,
   player: Player,
   state: State,
@@ -23,6 +24,7 @@ type PlayerCardProps = {
 }
 const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   isActivePlayer,
+  showChangeType,
   player,
   dispatch,
   state,
@@ -48,15 +50,21 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
 
   const handleRoll: DieProps['onRoll'] = (value) => {
     dispatch({
-      type: Actions.replacePlayer,
+      type: Actions.addBattleAttack,
       value: {
-        replaceIndex: playerIndex,
-        replacePlayer: {
-          ...player,
-          dieValue: value,
-        },
+        playerIndex,
+        attack,
       },
     })
+
+    dispatch({
+      type: Actions.setPlayerDieRoll,
+      value: {
+        playerIndex,
+        dieValue: value,
+      },
+    })
+
   }
 
 
@@ -81,11 +89,9 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
   const showAttack = attack !== null
   return (
     <div className={cx("PlayerCard", {})}>
-      <button
-        onClick={handleChangeType}
-        disabled={!canChangeType}
-      >change type</button>
-
+      <div className="Name">
+        {player.name}
+      </div>
       <Card
         modifier={modifier}
         cardType={player.cardType}
@@ -106,6 +112,13 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
           {showAttack && <span>attack: {attack.toFixed(2)}</span>}
         </div>
       }
+      {showChangeType &&
+        <button
+          onClick={handleChangeType}
+          disabled={!canChangeType}
+        >change type</button>
+      }
+
     </div>
   )
 }

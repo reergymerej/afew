@@ -5,13 +5,24 @@ import Hint from './Hint'
 import Key from './Key'
 import reducer from './reducer'
 import TypeList from './TypeList'
-import {Actions, initialState} from './types'
+import {Action, Actions, initialState, State} from './types'
 
 
+const stateWatcher = (state: State, dispatch: React.Dispatch<Action>) => {
+  const {
+    battleAttacks,
+  } = state
+  if (battleAttacks.length === 2) {
+    dispatch({
+      type: Actions.resolveBattle,
+    })
+  }
+}
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  stateWatcher(state, dispatch)
 
   const handleEditToggle = () => {
     dispatch({
@@ -42,6 +53,7 @@ const App = () => {
 
       {!state.isEditMode &&
         <Hint
+          battleResolved={state.battleResolved}
           gameMode={state.gameMode}
           dispatch={dispatch}
           opponentSelected={opponentSelected}

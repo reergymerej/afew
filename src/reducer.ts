@@ -39,12 +39,15 @@ const reducer = (state: State, action: Action): State => {
           return {
             ...state,
             gameMode: GameMode.chooseOpponent,
+            opponentIndex: null,
           }
+
         case GameMode.chooseOpponent:
           return {
             ...state,
             gameMode: GameMode.battle,
           }
+
         case GameMode.battle: {
           const newPlayers = state.players.map(player => {
             return {
@@ -56,8 +59,10 @@ const reducer = (state: State, action: Action): State => {
             ...state,
             gameMode: GameMode.chooseCard,
             players: newPlayers,
+            battleResolved: false,
           }
         }
+
         default:
           throw new Error(`unhandled case "${GameMode[state.gameMode]}"`)
       }

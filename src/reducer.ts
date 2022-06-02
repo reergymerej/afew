@@ -57,6 +57,7 @@ const reducer = (state: State, action: Action): State => {
           })
           return {
             ...state,
+            battleWinner: undefined,
             gameMode: GameMode.chooseCard,
             players: newPlayers,
             battleResolved: false,
@@ -97,9 +98,21 @@ const reducer = (state: State, action: Action): State => {
     }
 
     case Actions.resolveBattle: {
-      // Who won?
+      const { battleAttacks } = state
+      const values = battleAttacks.map(x => x.value)
+      let winnerIndex: number
+      if (values[0] > values[1]) {
+        winnerIndex = 0
+      } else if (values[1] > values[0]) {
+        winnerIndex = 1
+      } else {
+        throw new Error('tie not implemented')
+      }
+      const winnerPlayerIndex = battleAttacks[winnerIndex].playerIndex
+
       return {
         ...state,
+        battleWinner: state.players[winnerPlayerIndex].name,
         battleAttacks: [],
         battleResolved: true,
       }

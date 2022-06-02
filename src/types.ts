@@ -34,10 +34,10 @@ export const cardTypes: CardType[] = parseCardTypesText(savedTypesDefs)
 
 
 export type State = {
+  battleWinner?: string,
   battleResolved: boolean,
   players: Player[],
   types: CardType[],
-  activePlayerTypeChosen: boolean,
   isEditMode: boolean,
   activePlayerIndex: number,
   gameMode: GameMode,
@@ -54,7 +54,6 @@ export const initialState: State = {
   battleAttacks: [],
   isEditMode: false,
   activePlayerIndex: 0,
-  activePlayerTypeChosen: !false,
   opponentIndex: null,
   types: cardTypes,
   players: [
@@ -108,3 +107,7 @@ export enum CombatResult {
   draw,
 }
 
+export type AttackDetails = {
+  attack: number | null,
+  modifier: number | null,
+}

@@ -60,11 +60,11 @@ const App = () => {
         />
       }
 
-      {!state.isEditMode && !state.activePlayerTypeChosen &&
-        <div>choose type</div>
+      {!state.isEditMode && state.battleWinner &&
+        <h2>{state.battleWinner} wins!</h2>
       }
 
-      { !state.isEditMode && state.activePlayerTypeChosen &&
+      { !state.isEditMode &&
       <Board
         state={state}
         dispatch={dispatch}

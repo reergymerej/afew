@@ -50,14 +50,6 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
 
   const handleRoll: DieProps['onRoll'] = (value) => {
     dispatch({
-      type: Actions.addBattleAttack,
-      value: {
-        playerIndex,
-        attack,
-      },
-    })
-
-    dispatch({
       type: Actions.setPlayerDieRoll,
       value: {
         playerIndex,
@@ -65,6 +57,14 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
       },
     })
 
+    // TODO: sketchy, attack may not be ready yet
+    dispatch({
+      type: Actions.addBattleAttack,
+      value: {
+        playerIndex,
+        attack,
+      },
+    })
   }
 
 

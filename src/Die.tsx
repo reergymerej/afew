@@ -19,10 +19,12 @@ const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
   const ROLL_DURATION = 1500
   const ROLL_SPEED = 100
   const ref = React.useRef<number>(rollingValue)
+  const [didRoll, setDidRoll] = React.useState(false)
 
   // XXX: sloppy effects
   const handleClick = () => {
-    if (canRoll || !rolling) {
+    if (!didRoll && canRoll && !rolling) {
+      setDidRoll(true)
       setRolling(true)
       setRollingValue(rand(1, 6))
       const rollingInterval = setInterval(() => {

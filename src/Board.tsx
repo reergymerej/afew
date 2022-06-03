@@ -31,7 +31,7 @@ const Board: React.FunctionComponent<BoardProps> = ({
 
             const opponent = thisPlayersOpponent === null ? null : players[thisPlayersOpponent]
             const playerIsBattling = isActivePlayer || i === opponentIndex
-            const showChangeType = isActivePlayer && state.gameMode === GameMode.chooseCard
+            const showChangeType = state.canChangeType && isActivePlayer && state.gameMode === GameMode.chooseCard
 
             const { modifier, attack } = getAttackDetails(player, opponent, state.types)
 

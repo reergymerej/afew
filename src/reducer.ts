@@ -41,8 +41,8 @@ const reducer = (state: State, action: Action): State => {
         case GameMode.chooseCard:
           return {
             ...state,
+            canChangeType: false,
             gameMode: GameMode.chooseOpponent,
-            opponentIndex: null,
           }
 
         case GameMode.chooseOpponent:
@@ -72,7 +72,8 @@ const reducer = (state: State, action: Action): State => {
             defeatedPlayerIndex: undefined,
             battleResultTie: undefined,
             battleWinner: undefined,
-            gameMode: GameMode.chooseCard,
+            gameMode: GameMode.chooseOpponent,
+            opponentIndex: null,
             players: newPlayers,
             battleResolved: false,
             activePlayerIndex: state.nextPlayerIndex,

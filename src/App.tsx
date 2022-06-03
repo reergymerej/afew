@@ -1,7 +1,6 @@
 import {useReducer} from 'react'
 import './App.css'
 import Board from './Board'
-import Hint from './Hint'
 import Key from './Key'
 import reducer from './reducer'
 import TypeList from './TypeList'
@@ -30,9 +29,6 @@ const App = () => {
     })
   }
 
-  const { opponentIndex } = state
-  const opponentSelected = opponentIndex !== null
-
   return (
     <div className="App">
       <div>
@@ -49,15 +45,6 @@ const App = () => {
             types={state.types}
           />
         </div>
-      }
-
-      {!state.isEditMode &&
-        <Hint
-          battleResolved={state.battleResolved}
-          gameMode={state.gameMode}
-          dispatch={dispatch}
-          opponentSelected={opponentSelected}
-        />
       }
 
       {!state.isEditMode && state.battleWinner &&

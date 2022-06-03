@@ -1,11 +1,10 @@
 import React from 'react'
-import {CardType, CombatResult} from './types'
+import {CardType} from './types'
 import cx from 'classnames'
 import {getStyleForCardType} from './util'
 
 type CardProps = {
   cardType: CardType
-  combatResult: CombatResult | null,
   modifier: number | null,
   isActivePlayer: boolean,
   isOpponent: boolean,
@@ -18,7 +17,6 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
   const {
     modifier,
     cardType,
-    combatResult,
     isActivePlayer,
     isOpponent,
     flipped,
@@ -43,8 +41,6 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
           {modifier.toFixed(2)}
         </div>
       }
-      <br />
-      {combatResult !== null && CombatResult[combatResult]}
     </div>
   )
 }

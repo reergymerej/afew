@@ -1,19 +1,21 @@
-import {Action, Actions, GameMode} from "./types"
+import {Action, Actions, GameMode, State} from "./types"
 import cx from 'classnames'
 
-type HintProps = {
-  gameMode: GameMode,
+type ContinueButtonProps = {
   dispatch: React.Dispatch<Action>,
-  opponentSelected: boolean,
-  battleResolved: boolean,
+  state: State,
 }
 
-const Hint: React.FunctionComponent<HintProps> = ({
-  gameMode,
+export const ContinueButton: React.FC<ContinueButtonProps> = ({
   dispatch,
-  opponentSelected,
-  battleResolved,
+  state,
 }) => {
+  const {
+    gameMode,
+    battleResolved,
+    opponentIndex,
+  } = state
+  const opponentSelected = opponentIndex !== null
   const handleNextClick = () => {
     return dispatch({
       type: Actions.nextGameMode,
@@ -22,6 +24,30 @@ const Hint: React.FunctionComponent<HintProps> = ({
   const canClickNext = gameMode === GameMode.chooseCard
     || (gameMode === GameMode.chooseOpponent && opponentSelected)
     || (gameMode === GameMode.battle && battleResolved)
+
+  const labels: {[key in GameMode]: string} = {
+    [GameMode.chooseCard]: 'Begin Battle!',
+    [GameMode.chooseOpponent]: 'Attack!',
+    [GameMode.battle]: 'Next round',
+  }
+
+  return (
+      <button
+        disabled={!canClickNext}
+        onClick={handleNextClick}
+      >{labels[gameMode]}</button>
+  )
+}
+
+type HintProps = {
+  state: State,
+  gameMode: GameMode,
+  dispatch: React.Dispatch<Action>,
+}
+
+const Hint: React.FunctionComponent<HintProps> = ({
+  gameMode,
+}) => {
   return (
     <div className="Hint">
       <ol>
@@ -35,10 +61,6 @@ const Hint: React.FunctionComponent<HintProps> = ({
           Roll die.
         </li>
       </ol>
-      <button
-        disabled={!canClickNext}
-        onClick={handleNextClick}
-        >next</button>
     </div>
   )
 }

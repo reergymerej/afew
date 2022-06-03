@@ -1,6 +1,7 @@
 import cx from 'classnames'
 import Card from './Card'
 import Die, {DieProps} from './Die'
+import {ContinueButton} from './Hint'
 import {State, Actions, CardType, Player, Action, GameMode} from './types'
 
 
@@ -95,7 +96,6 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
       <Card
         modifier={modifier}
         cardType={player.cardType}
-        combatResult={null}
         isActivePlayer={isActivePlayer}
         flipped={flipped}
         hideModifier={hideModifier}
@@ -107,16 +107,31 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
           <Die
             value={player.dieValue}
             onRoll={handleRoll}
-            canRoll={player.dieValue === 0}
+            canRoll={player.dieValue === 0
+              && (state.battleAttacks || []).find(x => x.playerIndex === playerIndex) === undefined
+            }
           />
           {showAttack && <span>attack: {attack.toFixed(2)}</span>}
         </div>
       }
       {showChangeType &&
-        <button
-          onClick={handleChangeType}
-          disabled={!canChangeType}
-        >change type</button>
+        <div>
+          <button
+            onClick={handleChangeType}
+            disabled={!canChangeType}
+            >change type</button>
+          <ContinueButton
+            dispatch={dispatch}
+            state={state}
+          />
+        </div>
+      }
+
+      {isOpponent &&
+        <ContinueButton
+          dispatch={dispatch}
+          state={state}
+        />
       }
 
     </div>

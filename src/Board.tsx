@@ -36,18 +36,20 @@ const Board: React.FunctionComponent<BoardProps> = ({
 
         return (
           <div key={i} className="Row">
-            <PlayerCard
-              showChangeType={showChangeType}
-              playerIsBattling={playerIsBattling}
-              player={player}
-              state={state}
-              playerIndex={i}
-              dispatch={dispatch}
-              isActivePlayer={isActivePlayer}
-              attack={attack || null}
-              modifier={modifier}
-              hideDie={!showDie}
-            />
+            {!player.isDead &&
+              <PlayerCard
+                showChangeType={showChangeType}
+                playerIsBattling={playerIsBattling}
+                player={player}
+                state={state}
+                playerIndex={i}
+                dispatch={dispatch}
+                isActivePlayer={isActivePlayer}
+                attack={attack || null}
+                modifier={modifier}
+                hideDie={!showDie}
+              />
+            }
           </div>
         )
       })}

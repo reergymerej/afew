@@ -57,12 +57,11 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
       },
     })
 
-    // TODO: sketchy, attack may not be ready yet
+    // TODO: sketchy, handle in reducer by counting # of rolls
     dispatch({
       type: Actions.addBattleAttack,
       value: {
         playerIndex,
-        attack,
       },
     })
   }

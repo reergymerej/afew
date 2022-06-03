@@ -9,6 +9,7 @@ export type Player = {
   name: string,
   cardType: CardType,
   dieValue: number,
+  isDead?: boolean,
 }
 
 export enum GameMode {
@@ -28,12 +29,14 @@ thunder yellow
 dark black
 light lightyellow
 psychic purple
+normal tan
 `
 
 export const cardTypes: CardType[] = parseCardTypesText(savedTypesDefs)
 
 
 export type State = {
+  defeatedPlayerIndex?: number,
   nextPlayerIndex: number,
   battleWinner?: string,
   battleResolved: boolean,
@@ -46,7 +49,6 @@ export type State = {
   opponentIndex: null | number,
   battleAttacks: {
     playerIndex: number,
-    value: number,
   }[],
 }
 

@@ -2,6 +2,8 @@ import {GameMode, State, Action, Actions, Player} from "./types"
 import {getAttackDetails} from "./util"
 
 const reducer = (state: State, action: Action): State => {
+  console.log(Actions[action.type])
+
   switch (action.type) {
     case Actions.replacePlayer: {
       const { players} = state
@@ -50,14 +52,24 @@ const reducer = (state: State, action: Action): State => {
           }
 
         case GameMode.battle: {
-          const newPlayers = state.players.map(player => {
+          const {
+            players,
+            defeatedPlayerIndex,
+          } = state
+          const newPlayers = players.map((player, i) => {
             return {
               ...player,
               dieValue: 0,
+              isDead: player.isDead
+                || (
+                  defeatedPlayerIndex !== undefined
+                    && i === defeatedPlayerIndex
+                ),
             }
           })
           return {
             ...state,
+            defeatedPlayerIndex: undefined,
             battleResultTie: undefined,
             battleWinner: undefined,
             gameMode: GameMode.chooseCard,
@@ -122,13 +134,24 @@ const reducer = (state: State, action: Action): State => {
         }
       }
       const winnerIndex = sorted[0].playerIndex
+      const loserIndex = sorted[1].playerIndex
       const winner = state.players[winnerIndex]
+      const newPlayers = state.players.map((player, i) => {
+        return i !== loserIndex
+        ? player
+        : {
+          ...player,
+          // isDead: true,
+        }
+      })
       return {
         ...state,
         nextPlayerIndex: winnerIndex,
+        defeatedPlayerIndex: loserIndex,
         battleWinner: winner.name,
         battleAttacks: [],
         battleResolved: true,
+        players: newPlayers,
       }
     }
 
@@ -139,7 +162,6 @@ const reducer = (state: State, action: Action): State => {
           ...state.battleAttacks,
           {
             playerIndex: action.value.playerIndex,
-            value: action.value.attack,
           },
         ],
       }

@@ -83,6 +83,8 @@
   width: 2em;
   height: 2em;
   border: 2px solid black;
+  text-align: center;
+  line-height: 2em;
 }
 
 .Hint .active {

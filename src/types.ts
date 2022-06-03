@@ -10,6 +10,7 @@ export type Player = {
   cardType: CardType,
   dieValue: number,
   isDead?: boolean,
+  score: number,
 }
 
 export enum GameMode {
@@ -66,26 +67,31 @@ export const initialState: State = {
       name: 'player1',
       cardType: cardTypes[1],
       dieValue: 0,
+      score: 0,
     },
     {
       name: 'player2',
       cardType: cardTypes[0],
       dieValue: 0,
+      score: 0,
     },
     {
       name: 'player3',
       cardType: cardTypes[1],
       dieValue: 0,
+      score: 0,
     },
     {
       name: 'player4',
       cardType: cardTypes[2],
       dieValue: 0,
+      score: 0,
     },
     {
       name: 'player5',
       cardType: cardTypes[3],
       dieValue: 0,
+      score: 0,
     },
   ]
 }

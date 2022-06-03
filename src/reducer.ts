@@ -1,5 +1,5 @@
 import {GameMode, State, Action, Actions, Player} from "./types"
-import {getAttackDetails} from "./util"
+import {getAttackDetails, sortBy} from "./util"
 
 const reducer = (state: State, action: Action): State => {
   console.log(Actions[action.type])
@@ -123,10 +123,13 @@ const reducer = (state: State, action: Action): State => {
           attack: getAttackDetails(player, opponent, state.types).attack || 0,
         }
       })
-      const sorted = details.sort((a, b) => b.attack - a.attack)
+      const sorter = sortBy('attack')
+      const sorted = [...details].sort(sorter)
       if (sorted[0].attack === sorted[1].attack) {
+        // tie
         return {
           ...state,
+          nextPlayerIndex: state.activePlayerIndex,
           battleResultTie: true,
           battleWinner: '',
           battleAttacks: [],
@@ -136,12 +139,12 @@ const reducer = (state: State, action: Action): State => {
       const winnerIndex = sorted[0].playerIndex
       const loserIndex = sorted[1].playerIndex
       const winner = state.players[winnerIndex]
-      const newPlayers = state.players.map((player, i) => {
-        return i !== loserIndex
-        ? player
-        : {
+      const nextPlayers = state.players.map((player, i) => {
+        return {
           ...player,
-          // isDead: true,
+          score: i === winnerIndex
+            ? player.score + 1
+            : player.score,
         }
       })
       return {
@@ -151,7 +154,7 @@ const reducer = (state: State, action: Action): State => {
         battleWinner: winner.name,
         battleAttacks: [],
         battleResolved: true,
-        players: newPlayers,
+        players: nextPlayers,
       }
     }
 

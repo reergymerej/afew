@@ -69,7 +69,8 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
 
   const flipped = (!isActivePlayer && state.gameMode === GameMode.chooseCard)
     || (state.gameMode === GameMode.battle && !playerIsBattling)
-  const hideModifier = isActivePlayer && state.gameMode === GameMode.chooseCard
+  const hideModifier = flipped
+    || ( isActivePlayer && state.gameMode === GameMode.chooseCard)
   const canChangeType = isActivePlayer && state.gameMode === GameMode.chooseCard
 
   const isOpponent = !isActivePlayer

@@ -38,10 +38,9 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
       <h1>
         {cardType.name}
       </h1>
-      <br />
       {!hideModifier && modifier !== null &&
         <div>
-          modifier: {modifier.toFixed(2)}
+          {modifier.toFixed(2)}
         </div>
       }
       <br />

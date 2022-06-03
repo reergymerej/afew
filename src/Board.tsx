@@ -1,5 +1,6 @@
 import React from 'react'
 import PlayerCard from './PlayerCard'
+import Scores from './Scores'
 import {Player, Action, State, GameMode} from './types'
 import {getAttackDetails} from './util'
 
@@ -20,39 +21,42 @@ const Board: React.FunctionComponent<BoardProps> = ({
   } = state
   return (
     <div className="Board">
-      { players.map((player, i) => {
-        const isActivePlayer = i === activePlayerIndex
-        const thisPlayersOpponent = isActivePlayer
-          ? state.opponentIndex
-          : activePlayerIndex
+      <Scores players={state.players} />
+      <div className="Players">
+        { players.map((player, i) => {
+          const isActivePlayer = i === activePlayerIndex
+          const thisPlayersOpponent = isActivePlayer
+            ? state.opponentIndex
+            : activePlayerIndex
 
-        const opponent = thisPlayersOpponent === null ? null : players[thisPlayersOpponent]
-        const playerIsBattling = isActivePlayer || i === opponentIndex
-        const showChangeType = isActivePlayer && state.gameMode === GameMode.chooseCard
+            const opponent = thisPlayersOpponent === null ? null : players[thisPlayersOpponent]
+            const playerIsBattling = isActivePlayer || i === opponentIndex
+            const showChangeType = isActivePlayer && state.gameMode === GameMode.chooseCard
 
-        const { modifier, attack } = getAttackDetails(player, opponent, state.types)
+            const { modifier, attack } = getAttackDetails(player, opponent, state.types)
 
-        const showDie = (state.gameMode === GameMode.battle) && playerIsBattling
+            const showDie = (state.gameMode === GameMode.battle) && playerIsBattling
 
-        return (
+            return (
           <div key={i} className="Row">
-            {!player.isDead &&
-              <PlayerCard
-                showChangeType={showChangeType}
-                playerIsBattling={playerIsBattling}
-                player={player}
-                state={state}
-                playerIndex={i}
-                dispatch={dispatch}
-                isActivePlayer={isActivePlayer}
-                attack={attack || null}
-                modifier={modifier}
-                hideDie={!showDie}
-              />
-            }
+          {!player.isDead &&
+          <PlayerCard
+            showChangeType={showChangeType}
+            playerIsBattling={playerIsBattling}
+            player={player}
+            state={state}
+            playerIndex={i}
+            dispatch={dispatch}
+            isActivePlayer={isActivePlayer}
+            attack={attack || null}
+            modifier={modifier}
+            hideDie={!showDie}
+            />
+          }
           </div>
-        )
-      })}
+            )
+        })}
+      </div>
     </div>
   )
 }

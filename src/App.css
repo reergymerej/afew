@@ -6,9 +6,22 @@
 
 .Board {
   flex: 1;
+  display: flex;
+  /* background: lightgray; */
+}
+
+.Board .Players {
   /* background: lightgray; */
   display: flex;
   flex-wrap: wrap;
+}
+
+.Scores {
+  padding: 0.5em;
+}
+
+.ScoreItem {
+  white-space: nowrap;
 }
 
 .Row {
@@ -27,6 +40,7 @@
   background: #fff;
   opacity: 0.3;
   margin: 1em;
+  padding: 0.5em;
 }
 .Card.active {
   border: 5px solid black;

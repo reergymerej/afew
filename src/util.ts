@@ -90,3 +90,6 @@ export const getAttackDetails = (
     modifier,
   }
 }
+
+// XXX: cheating types
+export const sortBy = <T>(field: string) => (a: any, b: any): number => (b[field] as number) - (a[field] as number)

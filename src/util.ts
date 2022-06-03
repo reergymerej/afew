@@ -56,7 +56,6 @@ const getAdvantageModifier = (a: CardType, opponent: CardType, cardTypes: CardTy
   return advantage
 }
 
-
 const getModifier = (
   player: Player,
   opponent: Player | null,

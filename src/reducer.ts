@@ -1,4 +1,5 @@
 import {GameMode, State, Action, Actions, Player} from "./types"
+import {getAttackDetails} from "./util"
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -99,20 +100,24 @@ const reducer = (state: State, action: Action): State => {
 
     case Actions.resolveBattle: {
       const { battleAttacks } = state
-      const values = battleAttacks.map(x => x.value)
-      let winnerIndex: number
-      if (values[0] > values[1]) {
-        winnerIndex = 0
-      } else if (values[1] > values[0]) {
-        winnerIndex = 1
-      } else {
+      const indices = battleAttacks.map(x => x.playerIndex)
+      const players = indices.map(i => state.players[i])
+      const details = players.map((player, i, all) => {
+        const opponent = all.find(x => x !== player) || null
+        return {
+          playerIndex: indices[i],
+          attack: getAttackDetails(player, opponent, state.types).attack || 0,
+        }
+      })
+      const sorted = details.sort((a, b) => b.attack - a.attack)
+      if (sorted[0].attack === sorted[1].attack) {
         throw new Error('tie not implemented')
       }
-      const winnerPlayerIndex = battleAttacks[winnerIndex].playerIndex
-
+      const winnerIndex = sorted[0].playerIndex
+      const winner = state.players[winnerIndex]
       return {
         ...state,
-        battleWinner: state.players[winnerPlayerIndex].name,
+        battleWinner: winner.name,
         battleAttacks: [],
         battleResolved: true,
       }

@@ -63,6 +63,9 @@ const App = () => {
       {!state.isEditMode && state.battleWinner &&
         <h2>{state.battleWinner} wins!</h2>
       }
+      {!state.isEditMode && state.battleResultTie &&
+        <h2>Tie!</h2>
+      }
 
       { !state.isEditMode &&
       <Board

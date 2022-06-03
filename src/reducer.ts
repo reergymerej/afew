@@ -58,6 +58,7 @@ const reducer = (state: State, action: Action): State => {
           })
           return {
             ...state,
+            battleResultTie: undefined,
             battleWinner: undefined,
             gameMode: GameMode.chooseCard,
             players: newPlayers,
@@ -111,7 +112,13 @@ const reducer = (state: State, action: Action): State => {
       })
       const sorted = details.sort((a, b) => b.attack - a.attack)
       if (sorted[0].attack === sorted[1].attack) {
-        throw new Error('tie not implemented')
+        return {
+          ...state,
+          battleResultTie: true,
+          battleWinner: '',
+          battleAttacks: [],
+          battleResolved: true,
+        }
       }
       const winnerIndex = sorted[0].playerIndex
       const winner = state.players[winnerIndex]

@@ -36,6 +36,7 @@ export const cardTypes: CardType[] = parseCardTypesText(savedTypesDefs)
 export type State = {
   battleWinner?: string,
   battleResolved: boolean,
+  battleResultTie?: boolean,
   players: Player[],
   types: CardType[],
   isEditMode: boolean,

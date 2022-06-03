@@ -3,6 +3,7 @@ import Card from './Card'
 import Die, {DieProps} from './Die'
 import {ContinueButton} from './Hint'
 import {State, Actions, CardType, Player, Action, GameMode} from './types'
+import {getStyleForCardType} from './util'
 
 
 const getNextType = (cardType: CardType, cardTypes:CardType[]): CardType => {
@@ -103,16 +104,19 @@ const PlayerCard: React.FunctionComponent<PlayerCardProps> = ({
         onClick={handleCardClick}
       />
       { !hideDie &&
+      <div>
+        <Die
+          style={getStyleForCardType(player.cardType)}
+          value={player.dieValue}
+          onRoll={handleRoll}
+          canRoll={player.dieValue === 0
+            && (state.battleAttacks || []).find(x => x.playerIndex === playerIndex) === undefined
+          }
+        />
         <div>
-          <Die
-            value={player.dieValue}
-            onRoll={handleRoll}
-            canRoll={player.dieValue === 0
-              && (state.battleAttacks || []).find(x => x.playerIndex === playerIndex) === undefined
-            }
-          />
           {showAttack && <span>attack: {attack.toFixed(2)}</span>}
         </div>
+      </div>
       }
       {showChangeType &&
         <div>

@@ -10,11 +10,12 @@ export type DieProps = {
   value: number,
   onRoll: (value: number) => void,
   canRoll: boolean,
+  style: object,
 }
 
 const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
   const [rolling, setRolling] = React.useState(false)
-  const {value, onRoll, canRoll} = props
+  const {value, onRoll} = props
   const [rollingValue, setRollingValue] = React.useState<number>(0)
   const ROLL_DURATION = 1500
   const ROLL_SPEED = 100
@@ -22,8 +23,10 @@ const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
   const [didRoll, setDidRoll] = React.useState(false)
 
   // XXX: sloppy effects
-  const handleClick = () => {
-    if (!didRoll && canRoll && !rolling) {
+
+  React.useEffect(() => {
+    ref.current = rollingValue
+    const roll = () => {
       setDidRoll(true)
       setRolling(true)
       setRollingValue(rand(1, 6))
@@ -36,14 +39,13 @@ const Die: React.FunctionComponent<DieProps> = (props: DieProps) => {
         onRoll(ref.current)
       }, ROLL_DURATION)
     }
-  }
-
-  React.useEffect(() => {
-    ref.current = rollingValue
-  }, [rollingValue])
+    if (!didRoll) {
+      roll()
+    }
+  }, [onRoll, rollingValue, didRoll])
 
   return (
-    <div className="Die" onClick={handleClick}>
+    <div className="Die" style={props.style}>
       {rolling && <span>{rollingValue}</span>}
       {!rolling && value}
     </div>

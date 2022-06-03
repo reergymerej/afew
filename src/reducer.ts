@@ -63,6 +63,7 @@ const reducer = (state: State, action: Action): State => {
             gameMode: GameMode.chooseCard,
             players: newPlayers,
             battleResolved: false,
+            activePlayerIndex: state.nextPlayerIndex,
           }
         }
 
@@ -124,6 +125,7 @@ const reducer = (state: State, action: Action): State => {
       const winner = state.players[winnerIndex]
       return {
         ...state,
+        nextPlayerIndex: winnerIndex,
         battleWinner: winner.name,
         battleAttacks: [],
         battleResolved: true,

@@ -34,6 +34,7 @@ export const cardTypes: CardType[] = parseCardTypesText(savedTypesDefs)
 
 
 export type State = {
+  nextPlayerIndex: number,
   battleWinner?: string,
   battleResolved: boolean,
   battleResultTie?: boolean,
@@ -50,6 +51,7 @@ export type State = {
 }
 
 export const initialState: State = {
+  nextPlayerIndex: 0,
   battleResolved: false,
   gameMode: GameMode.chooseCard,
   battleAttacks: [],
